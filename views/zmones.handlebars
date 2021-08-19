@@ -1,0 +1,30 @@
+<button><a href="/naujas.html">Add new user</a></button>
+
+<table>
+    <th>
+        <td><b>Name</b></td>
+        <td><b>L.name</b></td>
+        <td><b>Salary</b></td>
+    </th>
+</table>
+
+{{#each zmones}}
+<table>
+<th>
+<td>
+<a href="/zmogus/{{id}}">{{vardas}}</a>
+</td>
+<td>
+<a href="/zmogus/{{id}}">{{pavarde}}</a>
+</td>
+<td>
+<a href="/zmogus/{{id}}">{{alga}}</a>
+</td>
+<td>
+    <button><a href="/zmogus/delete/{{id}}">Sudeginti</a></button>
+</td>
+
+
+</th>
+</table>
+{{/each}}
