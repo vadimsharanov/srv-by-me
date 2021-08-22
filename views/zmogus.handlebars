@@ -1,18 +1,12 @@
 <h1>Information about user</h1>
-        {{#with zmogus}}
-<table>
-    <tr>
-        <td><b> First name:</b> {{vardas}}</td>
-    </tr>
-    <tr>
-        <td><b>Last name:</b> {{pavarde}}</td>
-    </tr>
-    <tr>
-        <td><b>Salary:</b> {{alga}}</td>
-    </tr>
-    <tr>
-        <td>Unique <b>identification number:</b> {{id}}</td>
-    </tr>
-        {{/with}}
-    </th>
-</table>
+
+ <form action="/" method="post">
+    {{#if zmogus}} <input type="hidden" name="id" value="{{zmogus.id}}"> {{/if}}
+    Name   <input type="text" {{#if zmogus}} value="{{zmogus.vardas}}" {{/if}} name="newName"><br>
+    Last name   <input type="text" {{#if zmogus}} value="{{zmogus.pavarde}}"{{/if}}  name="newLastName"><br>
+    Salary   <input type="number" name="newSalary" {{#if zmogus}} value="{{zmogus.alga}}"{{/if}}><br>
+    <input  value="Save" type="submit">
+
+</form>
+        <input type="submit" value="Redaguoti" name="baton">
+

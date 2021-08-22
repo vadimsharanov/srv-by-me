@@ -33,13 +33,13 @@ app.get("/", async (req, res) => {
     }
 });
 
-app.get("/zmogus/:id", async (req, res) => {
+app.get("/zmogus/:id?", async (req, res) => {
     try {
         let zmones = await readFile(DB_FILE, {
             encoding:"utf-8"
         })
         zmones = JSON.parse(zmones);
-        let id, zmogus,index;
+        let id, zmogus;
         id = req.params.id;
         zmogus = zmones.find(z => z.id === id);
         res.render("zmogus", {
@@ -52,32 +52,59 @@ app.get("/zmogus/:id", async (req, res) => {
 })
 app.post("/", async (req,res) => {
     try { 
-        let nextId =0;
-        let zmones = await readFile(DB_FILE, {
+        if (req.body.id) {
+            let zmones = await readFile(DB_FILE, {
             encoding:"utf-8"
         })
-        zmones = JSON.parse(zmones);
-        for (const zmogus of zmones) {
-            if( zmogus.id > nextId) {
-                nextId = parseInt(zmogus.id);
+            zmones = JSON.parse(zmones);
+            let id, zmogus;
+            id = req.body.id;
+            zmogus = zmones.find(z => z.id === id);
+            if (zmogus) {
+                zmogus.vardas = req.body.newName;
+                zmogus.pavarde = req.body.newLastName;
+                zmogus.alga = req.body.newSalary;
             }
+            else {
+                res.render("nera", {
+                    zmogus,
+                    id
+                })
+                return ;
+            }
+            await writeFile(DB_FILE, JSON.stringify(zmones, null, 2, {
+                encoding:"utf-8"
+            }))
+            res.redirect("/")
+    
         }
-        nextId++;
-        console.log(nextId);
-        // const id = parseInt(req.params.id);
-        const zmogus = {
-            id: `${nextId}`,
-            vardas:req.body.newName,
-            pavarde:req.body.newLastName,
-            alga:(req.body.newSalary)
+
+        else {
+            let zmones = await readFile(DB_FILE, {
+                encoding:"utf-8"
+            })
+                zmones = JSON.parse(zmones);
+
+            let nextId = 0;
+            for (const zmogus of zmones) {
+                if( zmogus.id > nextId) {
+                    nextId = parseInt(zmogus.id);
+                }
+            }
+            nextId++;
+            const zmogus = {
+                id: `${nextId}`,
+                vardas:req.body.newName,
+                pavarde:req.body.newLastName,
+                alga:(req.body.newSalary)
+            }
+            zmones.push(zmogus);
+            await writeFile(DB_FILE, JSON.stringify(zmones,null, 2, {
+                encoding:"utf-8"
+            }))
+            res.redirect("/")
         }
-        // console.log(zmogus);
-        zmones.push(zmogus);
-        await writeFile(DB_FILE, JSON.stringify(zmones,null, 2, {
-            encoding:"utf-8"
-        }))
-        res.redirect("/")
-    }
+        }
     catch (err) {
         res.status(500).end(`<html> ivyko klaida ${err.message}</html>`)
     }
@@ -89,7 +116,7 @@ app.get("/zmogus/delete/:id", async (req, res) => {
             encoding:"utf-8"
         })
         zmones = JSON.parse(zmones);
-        let id, zmogus,index;
+        let id, zmogus;
         id = req.params.id;
         zmogus = zmones.findIndex(z => z.id === id);
         zmones.splice(zmogus, 1)
